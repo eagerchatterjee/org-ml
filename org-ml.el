@@ -7669,7 +7669,9 @@ The region to be updated will be between START and END and will
 be made to look like NEW-STR. Only differences as given by the Myers
 diff algorithm (eg insertions and deletions) will actually be
 applied to the buffer."
-  (-let* ((old-str (buffer-substring-no-properties start end))
+  (-let* ((capped-end (min (point-max) end))
+          (old-str (->> (buffer-substring-no-properties start capped-end)
+                        (s-pad-right (- end start) "\n")))
           (edits (org-ml--diff old-str new-str)))
     (save-excursion
       (while edits
